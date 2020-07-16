@@ -263,11 +263,18 @@ public class Color256 {
     public static final int GREY89 = 254;
     public static final int GREY93 = 255;
 
+    public static Color256 getColor(int index) {
+        if(index < 0 || index > 255)
+            return null;
+
+        return colors[index];
+    }
+
     /**
      * An array of all the colors in an 8-bit color palette. The color's code corresponds
      * to the color value in an 8-bit system.
      */
-    public static final Color256[] colors = {
+    private static final Color256[] colors = {
         new Color256(0, "Black", 0, 0, 0),
         new Color256(1, "Maroon", 128, 0, 0),
         new Color256(2, "Green1", 0, 128, 0),
@@ -526,12 +533,12 @@ public class Color256 {
         new Color256(255, "Grey93", 238, 238, 238)
     };
 
+
     private int code;
     private String name;
     private int red;
     private int green;
     private int blue;
-
 
     private Color256(int code, String name, int red, int green, int blue) {
         this.code = code;

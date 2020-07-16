@@ -11,35 +11,41 @@ import java.util.ArrayList;
  * @since 1.0.0
  */
 public class Console {
+    /** Escape sequence to reset the console foreground and background colors back to the default colors. */
     public static final String COLOR_RESET = "\u001B[0m";
-//    public static final String COLOR_BLACK = "\u001B[30m";
-//    public static final String COLOR_RED = "\u001B[31m";
-//    public static final String COLOR_GREEN = "\u001B[32m";
-//    public static final String COLOR_YELLOW = "\u001B[33m";
-//    public static final String COLOR_BLUE = "\u001B[34m";
-//    public static final String COLOR_PURPLE = "\u001B[35m";
-//    public static final String COLOR_CYAN = "\u001B[36m";
-//    public static final String COLOR_WHITE = "\u001B[37m";
-//    public static final String COLOR_BLACK_BACKGROUND = "\u001B[40m";
-//    public static final String COLOR_RED_BACKGROUND = "\u001B[41m";
-//    public static final String COLOR_GREEN_BACKGROUND = "\u001B[42m";
-//    public static final String COLOR_YELLOW_BACKGROUND = "\u001B[43m";
-//    public static final String COLOR_BLUE_BACKGROUND = "\u001B[44m";
-//    public static final String COLOR_PURPLE_BACKGROUND = "\u001B[45m";
-//    public static final String COLOR_CYAN_BACKGROUND = "\u001B[46m";
-//    public static final String COLOR_WHITE_BACKGROUND = "\u001B[47m";
 
+    /** Escape sequence to clear the console screen. */
     public static final String CLEAR_SCREEN = "\033[H\033[2J";
-    private static final Color256 DEFAULT_FOREGROUND_COLOR = Color256.colors[Color256.WHITE];
-    private static final Color256 DEFAULT_BACKGROUND_COLOR = Color256.colors[Color256.BLACK];
+
+    /** Code to set the console window to raw mode. */
+    public static final int CONSOLE_MODE_RAW = 1;
+
+    /** Code to set the console window to cooked mode. */
+    public static final int CONSOLE_MODE_COOKED = 2;
+
+    // Default foreground color for the console.
+    private static final Color256 DEFAULT_FOREGROUND_COLOR = Color256.getColor(Color256.WHITE);
+
+    // Default background color for the console.
+    private static final Color256 DEFAULT_BACKGROUND_COLOR = Color256.getColor(Color256.BLACK);
+
+    // The number of columns in the console.
     private int screenWidth = 81;
+
+    // The number of rows in the console.
     private int screenHeight = 25;
 
-    private Color256 foregroundColor = Color256.colors[Color256.WHITE];
-    private Color256 backgroundColor = Color256.colors[Color256.BLACK];
-    public ArrayList<ConsoleLayer> layers = new ArrayList<>();
+    // Stores the layers that are to be printed in the console window.
+    private ArrayList<ConsoleLayer> layers = new ArrayList<>();
+
+    // The current position of the cursor in the console window.
     private Point cursor = new Point();
 
+    /**
+     * Creates a Console object with the specified columns and rows.
+     * @param screenWidth the number of columns.
+     * @param screenHeight the number of rows.
+     */
     public Console(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -65,7 +71,7 @@ public class Console {
     }
 
     /**
-     * Creates a new layer at the top of the layers list.
+     * Creates a new {@link com.mgcoder.console.ConsoleLayer ConsoleLayer} at the top of the layers list.
      * @return If adding the new layer was successful, a reference to the new layer is returned. Null otherwise.
      */
     public ConsoleLayer addLayer() {
@@ -74,7 +80,7 @@ public class Console {
     }
 
     /**
-     * Adds the specified layer to the top of the layers list.
+     * Adds the specified {@link com.mgcoder.console.ConsoleLayer ConsoleLayer} to the top of the layers list.
      * @param layer the layer to add to the layers list.
      * @return If adding the new layer was successful, a reference to the new layer is returned. Null otherwise.
      */
@@ -185,15 +191,21 @@ public class Console {
     }
 
     /**
-     * Gets the specified ConsoleLayer.
-     * @param index the index of the ConsoleLayer.
-     * @return the ConsoleLayer at the specified index.
+     * Gets the specified {@link com.mgcoder.console.ConsoleLayer ConsoleLayer} from the layers list.
+     * @param index the index of the {@link com.mgcoder.console.ConsoleLayer ConsoleLayer}.
+     * @return the {@link com.mgcoder.console.ConsoleLayer ConsoleLayer} at the specified index.
      * @throws IndexOutOfBoundsException Thrown if the index specified is out of range in the list of layers.
      */
     public ConsoleLayer getLayer(int index) throws IndexOutOfBoundsException {
         return layers.get(index);
     }
 
+    /**
+     * Sets the layer at the specified index.
+     * @param index the index of the layer to set.
+     * @param layer the layer to replace the old layer.
+     * @throws IndexOutOfBoundsException Thrown if the index provided does not exist in the list of layers.
+     */
     public void setLayer(int index, ConsoleLayer layer) throws IndexOutOfBoundsException {
         layers.set(index, layer);
     }
@@ -207,57 +219,9 @@ public class Console {
         }
     }
 
-//    /**
-//     * Combines all of the layers in the list of layers in the order they appear and prints each layer's
-//     * ConsolePixel256 in the console window.
-//     */
-//    public void printLayers() {
-//
-//        ConsoleLayer tempLayer;
-//        int layerIndex;
-//        ConsolePixel256 pixelToPrint;
-//        ConsolePixel256 nextPixel;
-//        Point originalCursor = (Point)cursor.clone();
-//
-//        // Iterate through each pixel position in the console screen size.
-//        for(int y = 0; y < screenHeight; y++) {
-//            for(int x = 0; x < screenWidth; x++) {
-//                layerIndex = layers.size() - 1;
-//                tempLayer = layers.get(layerIndex);
-//                pixelToPrint = tempLayer.getPixel(x - tempLayer.getX(), y - tempLayer.getY());
-//
-//                // Determine what background, foreground, and character should be displayed by iterating through
-//                // each layer from front to back. If it is determined that no characteristics of a lower layer
-//                // would be visible, stop evaluating further layers and exit this loop. This is done to avoid
-//                // unnecessary processing of pixels if they will not be visible.
-//                while((pixelToPrint.getBackgroundColor() == null && layerIndex >= 0)) {
-//
-//                    nextPixel = layers.get(layerIndex).getPixel(x, y);
-//
-//                    // Check for a visible foreground color
-//                    if(pixelToPrint.getForegroundColor() == null && nextPixel.getForegroundColor() != null)
-//                        pixelToPrint.setForegroundColor(nextPixel.getForegroundColor());
-//
-//                    // Check for a visible background color
-//                    if(pixelToPrint.getBackgroundColor() == null && nextPixel.getBackgroundColor() != null)
-//                        pixelToPrint.setBackgroundColor(nextPixel.getBackgroundColor());
-//
-//                    // Check for a visible character
-//                    if(pixelToPrint.getCharacter() == '\0' && nextPixel.getCharacter() != '\0')
-//                        pixelToPrint.setCharacter(nextPixel.getCharacter());
-//
-//                    layerIndex--;
-//                }
-//
-//                // Print the final processed pixel.
-//                printPixel(x, y, pixelToPrint);
-//            }
-//        }
-//
-//        // Set the cursor back to where it was before printing.
-//        setCursor(originalCursor);
-//    }
-
+    /**
+     * Prints all of the layers onto the console window in the order that they appear in the list of layers.
+     */
     public void printLayers() {
         ConsoleLayer currentLayer;
         ConsolePixel256 currentPixel;
@@ -279,11 +243,11 @@ public class Console {
                         if(destX >= 0 && destX < renderLayer.getWidth() &&
                            destY >= 0 && destY < renderLayer.getHeight()) {
                             renderPixel = renderLayer.getPixel(x + currentLayer.getX(), y + currentLayer.getY());
-                            // Check if the pixel on the render layer is null. If there is so background, then pixels on
-                            // lower layers can be visible. Therefor, apply the current layer's traits to the render layer.
+                            // Check if the pixel on the render layer is null. If there is no background, then pixels on
+                            // lower layers can be visible. Therefore, apply the current layer's traits to the render layer.
                             if (renderPixel.getBackgroundColor() == null) {
                                 renderPixel.setBackgroundColor(currentPixel.getBackgroundColor());
-                                //
+                                // Check if the pixel does not have a foreground color.
                                 if (renderPixel.getForegroundColor() == null) {
                                     renderPixel.setForegroundColor(currentPixel.getForegroundColor());
                                     renderPixel.setCharacter(currentPixel.getCharacter());
@@ -298,6 +262,10 @@ public class Console {
         printLayer(renderLayer);
     }
 
+    /**
+     * Prints the provided layer to the console screen.
+     * @param layer the layer to be printed.
+     */
     public void printLayer(ConsoleLayer layer) {
         for(int y = 0; y < layer.getHeight(); y++) {
             for(int x = 0; x < layer.getWidth(); x++) {
@@ -307,16 +275,15 @@ public class Console {
     }
 
     /**
-     * Prints a ConsolePixel256 on the console window.
+     * Prints a {@link com.mgcoder.console.ConsolePixel256 ConsolePixel256} on the console window.
      * @param x the x position to display the pixel.
      * @param y the y position to display the pixel.
-     * @param pixel the ConsolePixel256 object to be printed.
+     * @param pixel the {@link com.mgcoder.console.ConsolePixel256 ConsolePixel256} object to be printed.
      */
     public void printPixel(int x, int y, ConsolePixel256 pixel) {
         setCursor(x, y);
 
         try {
-            //waitMilli(2000);
             if (pixel.getForegroundColor() == null) pixel.setForegroundColor(DEFAULT_FOREGROUND_COLOR);
             if (pixel.getBackgroundColor() == null) pixel.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
             if (pixel.getCharacter() == '\0') pixel.setCharacter(' ');
@@ -329,6 +296,7 @@ public class Console {
         setCursor(x, y);
     }
 
+    // Waits for the specified amount of time in milliseconds.
     private void waitMilli(long milli) {
         long start = System.currentTimeMillis();
         while(System.currentTimeMillis() < start + milli) {}
@@ -367,13 +335,23 @@ public class Console {
             setCursor(cursor.x, cursor.y);
     }
 
+    /**
+     * Resets the foreground and background colors back to the console defaults.
+     */
     public void resetColorDefaults() {
         System.out.print(COLOR_RESET);
     }
 
-    public static final int CONSOLE_MODE_RAW = 1;
-    public static final int CONSOLE_MODE_COOKED = 2;
-
+    /**
+     * Sets the console mode. Raw mode provides more control over the console window. Printing characters and new lines
+     * are the responsibility of the programmer to handle. Input is also captured after each key stroke. Cooked mode
+     * is the default mode where these things are handled for you and input is captured after the user presses return.
+     * @param consoleMode the code of the mode to set the console to.
+     * @return true if a valid console mode was passed in, false otherwise.
+     * @throws IOException thrown if an I/O error occurs.
+     * @throws InterruptedException if the current thread is interrupted by another thread while it is waiting,
+     * then the wait is ended and an {@link java.lang.InterruptedException InterruptedException} is thrown.
+     */
     public boolean setConsoleMode(int consoleMode) throws IOException, InterruptedException {
         String[] command;
 

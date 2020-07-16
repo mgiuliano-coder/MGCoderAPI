@@ -15,8 +15,8 @@ public class ConsoleLayer {
     public static final int MIN_COLOR_CODE = 0;
     public static final int MAX_COLOR_CODE = 255;
     private static final String CLEAR_SCREEN = "\033[H\033[2J";
-    public static final Color256 DEFAULT_FOREGROUND_COLOR = Color256.colors[Color256.WHITE];
-    public static final Color256 DEFAULT_BACKGROUND_COLOR = Color256.colors[Color256.BLACK];
+    public static final Color256 DEFAULT_FOREGROUND_COLOR = Color256.getColor(Color256.WHITE);
+    public static final Color256 DEFAULT_BACKGROUND_COLOR = Color256.getColor(Color256.BLACK);
     protected int width;
     protected int height;
     protected int x;
@@ -151,7 +151,7 @@ public class ConsoleLayer {
      * @return the foreground color of the character block.
      */
     public Color256 getForegroundColor(int x, int y) {
-        return Color256.colors[layer[x][y].getForegroundColor().getCode()];
+        return Color256.getColor(layer[x][y].getForegroundColor().getCode());
     }
 
     /**
@@ -177,15 +177,17 @@ public class ConsoleLayer {
         if(color < MIN_COLOR_CODE || color > MAX_COLOR_CODE)
             throw new IndexOutOfBoundsException("Color code must be from 0 to 255.");
 
-        setForegroundColor(x, y, Color256.colors[color]);
+        setForegroundColor(x, y, Color256.getColor(color));
     }
 
     /**
      * Gets the background color of a ConsolePixel256 on this ConsoleLayer.
+     * @param x the x coordinate on the screen (in character blocks).
+     * @param y the y coordinate on the screen (in character blocks).
      * @return the background color of a ConsolePixel256 on this ConsoleLayer.
      */
     public Color256 getBackgroundColor(int x, int y) {
-        return Color256.colors[layer[x][y].getBackgroundColor().getCode()];
+        return Color256.getColor(layer[x][y].getBackgroundColor().getCode());
     }
 
     /**
@@ -211,7 +213,7 @@ public class ConsoleLayer {
         if(color < MIN_COLOR_CODE || color > MAX_COLOR_CODE)
             throw new IndexOutOfBoundsException("Color code must be from 0 to 255.");
 
-        setBackgroundColor(x, y, Color256.colors[color]);
+        setBackgroundColor(x, y, Color256.getColor(color));
     }
 
     /**

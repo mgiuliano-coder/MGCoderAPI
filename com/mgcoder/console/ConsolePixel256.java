@@ -66,7 +66,7 @@ public class ConsolePixel256 {
             return null;
         }
         else {
-            this.foregroundColor = Color256.colors[foregroundColor];
+            this.foregroundColor = Color256.getColor(foregroundColor);
             return this.foregroundColor;
         }
     }
@@ -98,7 +98,7 @@ public class ConsolePixel256 {
             return null;
         }
         else {
-            this.backgroundColor = Color256.colors[backgroundColor];
+            this.backgroundColor = Color256.getColor(backgroundColor);
             return this.backgroundColor;
         }
 
